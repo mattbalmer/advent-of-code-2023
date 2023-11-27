@@ -35,7 +35,7 @@ You must (for now) copy-paste the test-data manually into `data-test.txt`
 Each day is divided into: 
 - data files (`data.txt` and `data-test.txt`)
 - solution files (`part1.ts` and `part2.ts`), which contain your actual logic
-- a format file (`format.ts`), which is used to parse the data files into a usable format for the solution files
+- a format file (`format.ts`), which is used to parse the data files into a usable format for the solution files (eg. when the input is a [pair of numbers](https://github.com/mattbalmer/advent-of-code-2022/blob/main/day-02/format.ts), or a [grid](https://github.com/mattbalmer/advent-of-code-2022/blob/main/day-08/format.ts))
 - a test file (`test.ts`), which you can optionally use to test your solutions
 
 ### Execution
