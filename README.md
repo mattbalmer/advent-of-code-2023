@@ -15,9 +15,9 @@ WEB_SESSION=<your aoc session cookie>
 Go to [https://adventofcode.com/2023](https://adventofcode.com/2023) and sign in, then get the value of the `session` cookie, and put it into the value for `WEB_SESSION` in `.env`
 
 ## Usage
-Two commands are available: `setup` and `start`
-`yarn setup {DAY} [--force] [--fetch]`
-`yarn start {DAY} p{PART} [-t|--test-data] [-d|--debug]`
+Two commands are available: `setup` and `start`  
+`yarn setup {DAY} [--force] [--fetch]`  
+`yarn start {DAY} p{PART} [-t|--test-data] [-d|--debug]`  
 
 ### New Day
 tl;dr: `yarn setup --fetch`
