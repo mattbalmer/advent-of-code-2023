@@ -49,3 +49,8 @@ A `part` flag is required, as each AoC puzzle is split into two parts. (eg. `yar
 To run on test data, add the `-t` flag. (eg. `yarn start 5 p1 -t`)
 
 To run in debug mode, add the `-d` flag. (eg. `yarn start 5 p1 -d`). Can mostly ignore this, sometimes useful for printing out the data in a nice format or to a file (eg. some of the grid puzzles)
+
+## Utils
+There are some relatively puzzle-agnostic utils in `utils/*` that you are free to use. Some (`data.ts`) are required for the runner to work, so be careful if you remove these.
+
+I like to add to this folder as the month goes on, (eg with `grid.ts`, [example here from previous year](https://github.com/mattbalmer/advent-of-code-2022/blob/main/utils/grid.ts)), feel free to do the same!
