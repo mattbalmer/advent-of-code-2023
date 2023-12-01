@@ -1,7 +1,8 @@
 import { Execute } from './format';
 import { toInt } from '@utils/numbers';
 import { sum } from '@utils/array';
-import { firstNum } from './shared';
+
+export const firstNum = (char: string): boolean => !isNaN(toInt(char))
 
 export const execute: Execute = (lines) => {
   return sum(
