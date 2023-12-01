@@ -1,42 +1,38 @@
 import { Execute } from './format';
 import { toInt } from '@utils/numbers';
 import { sum } from '@utils/array';
+import { reverse } from '@utils/strings';
 
 const NUMBERS = ['one','two','three','four','five','six','seven','eight','nine'];
+const NUMBERS_REVERSE = NUMBERS.map(reverse);
+
+const replaceForward = (str: string): string => str.replace(
+  new RegExp(NUMBERS.join('|')),
+  (match) => `${NUMBERS.indexOf(match) + 1}`
+);
+
+const replaceBackward = (str: string): string => reverse(
+  reverse(str).replace(
+    new RegExp(NUMBERS_REVERSE.join('|')),
+    (match) => `${NUMBERS_REVERSE.indexOf(match) + 1}`
+  )
+);
+
+const replaceStringNumbers = (line: string): string => {
+  return replaceBackward(
+    replaceForward(line)
+  );
+}
+
+export const firstNum = (char: string): boolean => !isNaN(toInt(char))
 
 export const execute: Execute = (lines) => {
   return sum(
-    lines.map((line, iL) => {
-      let value = '';
-      let window = '';
-      let i = 0;
-      let d = 1;
-
-      while (i < line.length && i >= 0 && value.length < 2) {
-        const c = line[i];
-        const n = toInt(c);
-
-        if (!isNaN(n)) {
-          value += c;
-          d *= -1;
-          window = '';
-          i = line.length;
-        } else {
-          window = d > 0 ? `${window}${c}` : `${c}${window}`;
-
-          const numberIndex = NUMBERS.findIndex(number => window.includes(number));
-          if (numberIndex >= 0) {
-            value += `${numberIndex + 1}`;
-            d *= -1;
-            window = '';
-            i = line.length;
-          }
-        }
-
-        i += d;
-      }
-
-      return toInt(`${value}`);
+    lines.map(line => {
+      const chars = replaceStringNumbers(line).split('');
+      const first = chars.find(firstNum);
+      const last = chars.reverse().find(firstNum);
+      return toInt(`${first}${last}`);
     })
   );
 }
