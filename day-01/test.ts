@@ -37,6 +37,7 @@ describe(`Day 1`, () => {
     it('should give the real answer', () => {
       const result = execute(part2, DATA, format);
 
+      // todo: this gives different result than while loop solution, needs debugging.
       console.log(result);
     });
   });
