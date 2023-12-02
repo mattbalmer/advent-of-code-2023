@@ -1,4 +1,5 @@
 import { toInt } from '@utils/numbers';
+import { MaxMap } from '@utils/map';
 
 export type Color = 'red' | 'green' | 'blue';
 
@@ -26,16 +27,8 @@ export const lineToGame = (line: string): Game => {
   };
 }
 
-export const maxSets = (sets: Record<Color, number>[]): Record<Color, number> => {
+export const maxSets = (sets: Record<Color, number>[]): MaxMap<Color> => {
   return sets.reduce((acc, set) => {
-    return {
-      red: Math.max(acc.red, set.red || 0),
-      green: Math.max(acc.green, set.green || 0),
-      blue: Math.max(acc.blue, set.blue || 0),
-    }
-  }, {
-    red: 0,
-    green: 0,
-    blue: 0,
-  });
+    return acc.setAll(set);
+  }, new MaxMap<Color>());
 }

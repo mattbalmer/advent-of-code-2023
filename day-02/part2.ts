@@ -1,15 +1,13 @@
 import { Execute } from './format';
-import { Game, lineToGame, maxSets } from './shared';
+import { Game, maxSets } from './shared';
 import { mult, sum } from '@utils/array';
 
 const powerOfGame = (game: Game): number => {
   const maxSeen = maxSets(game.sets);
-  return mult(Object.values(maxSeen));
+  return mult([...maxSeen.values()]);
 }
 
-export const execute: Execute = (lines) => {
-  const games = lines.map(lineToGame);
-
+export const execute: Execute = (games) => {
   return sum(
     games.map(powerOfGame),
   )

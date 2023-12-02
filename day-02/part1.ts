@@ -1,5 +1,5 @@
 import { Execute } from './format';
-import { Color, lineToGame, maxSets } from './shared';
+import { Color, maxSets } from './shared';
 import { sum } from '@utils/array';
 
 const CONSTRAINT: Record<Color, number> = {
@@ -8,12 +8,10 @@ const CONSTRAINT: Record<Color, number> = {
   blue: 14,
 };
 
-export const execute: Execute = (lines) => {
-  const games = lines.map(lineToGame);
-
+export const execute: Execute = (games) => {
   const possibleGames = games.filter((game) => {
     const maxSeen = maxSets(game.sets);
-    return Object.entries(maxSeen).every(([color, amount]) => amount <= CONSTRAINT[color]);
+    return [...maxSeen.entries()].every(([color, amount]) => amount <= CONSTRAINT[color]);
   });
 
   return sum(
