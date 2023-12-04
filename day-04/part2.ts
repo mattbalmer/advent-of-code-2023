@@ -20,11 +20,10 @@ export const execute: Execute = (cards) => {
     const count = matching.length;
 
     const multiplier = multipliers.get(card.id);
-    points += 1;
+    points += multiplier;
 
     for (let i = 1; i <= count; i++) {
       multipliers.increment(card.id + i, multiplier);
-      points += multiplier;
     }
   }
 
