@@ -5,18 +5,38 @@ export type Race = {
   time: number;
 }
 
-export const inputToRaces = (lines: [string, string]): Race[] => {
-  const [times, distances] = lines
-    .map((line) =>
-      line.split(':')[1]
-        .replace(/\s+/g, ' ')
-        .split(' ')
-        .filter(Boolean)
-        .map(toInt)
-    );
+export const slope = (y: number, n: number): number => (y / n) + n;
 
-  return distances.map((distance, i) => ({
-    distance,
-    time: times[i],
-  }));
+export const doesWinRace = (target: number, time: number, release: number): boolean => {
+  const x = slope(target, release);
+  return x < time;
+}
+
+export const numWaysToWinRace = (race: Race): number => {
+  let lowerBound;
+  let upperBound;
+
+  // set lowerBound
+  for (let i = 1; i < race.time; i++) {
+    const solves = doesWinRace(race.distance, race.time, i);
+    if (solves) {
+      lowerBound = i;
+      break;
+    }
+  }
+
+  if (!lowerBound) {
+    return 0;
+  }
+
+  // set upperBound
+  for (let i = race.time - 1; i > lowerBound; i--) {
+    const solves = doesWinRace(race.distance, race.time, i);
+    if (solves) {
+      upperBound = i;
+      break;
+    }
+  }
+
+  return upperBound - lowerBound + 1;
 }
