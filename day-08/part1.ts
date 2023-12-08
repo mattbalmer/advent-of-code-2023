@@ -1,21 +1,9 @@
 import { Execute } from './format';
-
-type Node = 'string';
-type Connections = [left: Node, right: Node];
-
-const CHAR_INDEX = 'LR';
+import { CHAR_INDEX, parseMap } from './shared';
 
 export const execute: Execute = (lines) => {
   const SEQUENCE = lines[0].split('');
-
-  const map = lines.slice(2).reduce((map, line) => {
-    const [id, connections] = line.split(' = ');
-    const [left, right] = connections.split(', ');
-    return {
-      ...map,
-      [id]: [left.substring(1), right.substring(0, right.length - 1)]
-    }
-  }, {} as Record<Node, Connections>);
+  const map = parseMap(lines);
 
   let node = 'AAA';
   let steps = 0;
