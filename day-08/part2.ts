@@ -22,12 +22,15 @@ export const execute: Execute = (lines) => {
   console.log('starting nodes', nodes);
   let steps = 0;
   let si = 0;
+  let zCount = 0;
 
-  while (nodes.some(node => node[2] !== 'Z')) {
+  while (zCount < nodes.length) {
     const char = SEQUENCE[si++ % SEQUENCE.length];
+    console.log('nodes', si, char, zCount, nodes.join(', '));
     const i = CHAR_INDEX.indexOf(char);
     nodes = nodes.map(node => map[node][i]);
     steps++;
+    zCount = nodes.filter(node => node[2] === 'Z').length;
   }
 
   return steps;
