@@ -18,32 +18,16 @@ export const execute: Execute = (lines) => {
     }
   }, {} as Record<Node, Connections>);
 
-  const nextNode = memoize((node) => {
-    let result = node;
-    SEQUENCE.forEach(char => {
-      const i = CHAR_INDEX.indexOf(char);
-      result = map[result][i];
-    });
-    return result;
-  });
-
   let nodes = Object.keys(map).filter(key => key[2] === 'A');
   console.log('starting nodes', nodes);
   let steps = 0;
-
-  let states = [];
+  let si = 0;
 
   while (nodes.some(node => node[2] !== 'Z')) {
-    let state = nodes.join(',');
-    if (states.indexOf(state) < 0) {
-      states.push(state);
-      console.log(state);
-    } else {
-      console.log('loop detected', nodes, states);
-      break;
-    }
-    nodes = nodes.map((node) => nextNode(node));
-    steps += SEQUENCE.length;
+    const char = SEQUENCE[si++ % SEQUENCE.length];
+    const i = CHAR_INDEX.indexOf(char);
+    nodes = nodes.map(node => map[node][i]);
+    steps++;
   }
 
   return steps;
