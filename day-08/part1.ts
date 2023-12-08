@@ -1,20 +1,20 @@
-import { Execute } from './format';
-import { CHAR_INDEX, parseMap } from './shared';
+// 323 chars
 
-export const execute: Execute = (lines) => {
-  const SEQUENCE = lines[0].split('');
-  const map = parseMap(lines);
+export const execute = (l) => {
+  let m = l.slice(2).reduce((m, d) => {
+    const [, n, l, r] = d.match(/([A-Z]+) = \(([A-Z]+), ([A-Z]+)\)/);
+    m[n] = [l, r];
+    return m;
+  }, {});
 
-  let node = 'AAA';
-  let steps = 0;
+  let n = 'AAA';
+  let s = 0;
 
-  while (node !== 'ZZZ') {
-    SEQUENCE.forEach(char => {
-      const i = CHAR_INDEX.indexOf(char);
-      node = map[node][i];
-      steps++;
-    });
+  while (n != 'ZZZ') {
+    n = m[n][
+      'LR'.indexOf(l[0][s++ % l[0].length])
+    ];
   }
 
-  return steps;
+  return s;
 }

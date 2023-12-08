@@ -1,24 +1,29 @@
-import { Execute } from './format';
-import { lcm } from '@utils/numbers';
-import { CHAR_INDEX, parseMap } from './shared';
+// 530 chars
 
-export const execute: Execute = (lines) => {
-  const SEQUENCE = lines[0].split('');
-  const map = parseMap(lines);
+let g = (a, b) =>
+  b === 0 ? a : g(b, a % b);
 
-  const nodes = Object.keys(map).filter(key => key[2] === 'A');
+let lc = n =>
+  n.reduce((a, b) => a * b / g(a, b));
 
-  const factors = nodes.map(node => {
-    let steps = 0;
-    while (node[2] !== 'Z') {
-      SEQUENCE.forEach(char => {
-        const i = CHAR_INDEX.indexOf(char);
-        node = map[node][i];
-        steps++;
-      });
-    }
-    return steps;
-  });
+export const execute = (l) => {
+  let m = l.slice(2).reduce((m, d) => {
+    const [, n, l, r] = d.match(/([A-Z]+) = \(([A-Z]+), ([A-Z]+)\)/);
+    m[n] = [l, r];
+    return m;
+  }, {});
 
-  return lcm(factors);
+  let n = Object.keys(m).filter(k => k[2] == 'A');
+
+  return lc(
+    n.map(n => {
+      let s = 0;
+      while (n[2] != 'Z') {
+        n = m[n][
+          'LR'.indexOf(l[0][s++ % l[0].length])
+        ];
+      }
+      return s;
+    })
+  );
 }
