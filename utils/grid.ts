@@ -54,6 +54,11 @@ export const getCell = <T extends any = unknown>(grid: Grid<T>, [col, row]: Coor
   return grid.cells[col + grid.width * row];
 }
 
+export const setCell = <T extends any = unknown>(grid: Grid<T>, [col, row]: Coordinate, value: T): Grid<T> => {
+  grid.cells[col + grid.width * row] = value;
+  return grid;
+}
+
 export const isValidCoordinate = (grid: Grid, [x, y]: Coordinate) =>
   x >= 0 && x < grid.width && y >= 0 && y < grid.height;
 
