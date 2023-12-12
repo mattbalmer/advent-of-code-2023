@@ -8,20 +8,21 @@ import {
   Grid,
   isValidCoordinate,
   setCell,
-  Traversals,
   traverse
 } from '@utils/grid';
+import { last } from '@utils/array';
 
-type Pipe = '|' | '-' | 'L' | 'J' | '7' | 'F' | '.' | 'S';
+type RealPipes = '|' | '-' | 'L' | 'J' | '7' | 'F';
+type Pipe = RealPipes | '.' | 'S';
 
 const ValidPipesByDir: Record<Pipe, DIR[]> = {
   '|': [DIR.UP, DIR.DOWN],
   '-': [DIR.LEFT, DIR.RIGHT],
-  'L': [DIR.DOWN, DIR.LEFT],
-  'J': [DIR.RIGHT, DIR.DOWN],
-  '7': [DIR.RIGHT, DIR.UP],
-  'F': [DIR.LEFT, DIR.UP],
-  'S': [DIR.LEFT, DIR.UP, DIR.DOWN, DIR.RIGHT],
+  'L': [DIR.RIGHT, DIR.UP],
+  'J': [DIR.UP, DIR.LEFT],
+  '7': [DIR.LEFT, DIR.DOWN],
+  'F': [DIR.RIGHT, DIR.DOWN],
+  'S': [DIR.RIGHT, DIR.DOWN, DIR.LEFT, DIR.RIGHT],
   '.': [],
 };
 
@@ -31,7 +32,7 @@ const toGrid = (lines: string[]): {
 } => {
   const [width, height] = [lines.length, lines.length];
   let start = null;
-  const grid = {
+  const grid: Grid<Pipe> = {
     width,
     height,
     cells: []
@@ -39,12 +40,11 @@ const toGrid = (lines: string[]): {
 
   for(let y = 0; y < height; y++) {
     for(let x = 0; x < width; x++) {
-      const coord = coordToString([x, y]);
       const content = lines[y][x] as Pipe;
-      setCell(grid, [x, y], content);
       if (content === 'S') {
         start = [x, y];
       }
+      setCell(grid, [x, y], content);
     }
   }
 
@@ -54,24 +54,36 @@ const toGrid = (lines: string[]): {
   }
 }
 
-const findAdjacentConnections = (grid: Grid<Pipe>, coord: Coordinate): Coordinate[] => {
-  const adjacent = (Object.keys(DIR) as DIR[])
+const findStartConnections = (grid: Grid<Pipe>, coord: Coordinate): Coordinate[] => {
+  return (Object.keys(DIR) as DIR[])
     .map(dir => traverse(coord, dir))
-    .filter(c => isValidCoordinate(grid, c));
-
-  return adjacent
+    .filter(c => isValidCoordinate(grid, c))
     .filter(c => {
       const pipe = getCell(grid, c);
-      const dir = getDir(coord, c);
+      const dir = getDir(c, coord);
       return ValidPipesByDir[pipe].includes(dir);
     });
 }
 
 export const execute: Execute = (lines) => {
   const { grid, start } = toGrid(lines);
-  console.log('grid', grid);
 
-  const adjacentConnections = findAdjacentConnections(grid, start);
-  console.log('adj', adjacentConnections.map((c) => `${coordToString(c)}: ${getCell(grid, c)}`).join('\n'))
-  return 4;
+  const path = [
+    start,
+    findStartConnections(grid, start)[0]
+  ];
+
+  while (true) {
+    const [prev, head] = path.slice(-2);
+    const current = getCell(grid, last(path));
+
+    if (current === 'S') {
+      return Math.floor(path.length / 2);
+    }
+
+    const dirIn = getDir(head, prev);
+    const [dirOut] = ValidPipesByDir[current].filter(d => d !== dirIn);
+
+    path.push(traverse(head, dirOut));
+  }
 }

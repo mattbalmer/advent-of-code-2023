@@ -41,10 +41,10 @@ export const coordToString = (coordinate: Coordinate): string =>
 export const coordFromString = (coordinate: string): Coordinate =>
   coordinate.split(',').map(toInt) as Coordinate;
 
-export const getDir = (a: Coordinate, b: Coordinate): DIR => {
+export const getDir = (from: Coordinate, to: Coordinate): DIR => {
   const t: Coordinate = [
-    Math.sign(b[0] - a[0]),
-    Math.sign(b[1] - a[1]),
+    Math.sign(to[0] - from[0]),
+    Math.sign(to[1] - from[1]),
   ];
   const i = Object.values(Traversals).findIndex((_) => coordsMatch(t, _));
   return Object.keys(Traversals)[i] as DIR;
