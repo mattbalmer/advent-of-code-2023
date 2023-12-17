@@ -11,6 +11,7 @@ export type Grid <T extends any = unknown> = {
   cells: T[],
   width: number,
   height: number,
+  content?: Coordinate[],
 }
 
 export type Coordinate = [x: number, y: number];
@@ -41,10 +42,10 @@ export const coordToString = (coordinate: Coordinate): string =>
 export const coordFromString = (coordinate: string): Coordinate =>
   coordinate.split(',').map(toInt) as Coordinate;
 
-export const getDir = (a: Coordinate, b: Coordinate): DIR => {
+export const getDir = (from: Coordinate, to: Coordinate): DIR => {
   const t: Coordinate = [
-    Math.sign(b[0] - a[0]),
-    Math.sign(b[1] - a[1]),
+    Math.sign(to[0] - from[0]),
+    Math.sign(to[1] - from[1]),
   ];
   const i = Object.values(Traversals).findIndex((_) => coordsMatch(t, _));
   return Object.keys(Traversals)[i] as DIR;
@@ -52,6 +53,12 @@ export const getDir = (a: Coordinate, b: Coordinate): DIR => {
 
 export const getCell = <T extends any = unknown>(grid: Grid<T>, [col, row]: Coordinate): T => {
   return grid.cells[col + grid.width * row];
+}
+
+export const setCell = <T extends any = unknown>(grid: Grid<T>, [col, row]: Coordinate, value: T): Grid<T> => {
+  grid.cells[col + grid.width * row] = value;
+  grid.content?.push([col, row]);
+  return grid;
 }
 
 export const isValidCoordinate = (grid: Grid, [x, y]: Coordinate) =>
