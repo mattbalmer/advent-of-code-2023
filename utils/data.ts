@@ -54,14 +54,14 @@ export const extractDay = (dirname: string): number => {
   return parseInt(dirname.split('/').slice(-1)[0].replace('day-', ''))
 }
 
-export const execute = <T = unknown, A extends any[] = unknown[]>(part: {
-  format?: (input: string) => A,
+export const execute = <T = unknown, A extends any[] = unknown[], B extends any[] = unknown[]>(part: {
+  format?: (input: string, ...args: B) => A,
   execute: (...args: A) => T,
-}, data: string, format: (input: string) => A): ReturnType<typeof part.execute> => {
+}, data: string, format: (input: string, ...args: B) => A, ...extraArgs: B): ReturnType<typeof part.execute> => {
   if (part.format) {
-    return part.execute(...part.format(data));
+    return part.execute(...part.format(data, ...extraArgs));
   }
-  return part.execute(...format(data));
+  return part.execute(...format(data, ...extraArgs));
 }
 
 export const linesInFile = (string: string, options: {

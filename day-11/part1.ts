@@ -1,7 +1,6 @@
 import { Execute } from './format';
 import { insert } from '@utils/strings';
 import { coordFromString, coordsForIndex, distanceCardinal, Grid, setCell } from '@utils/grid';
-import { hidden } from 'chalk';
 import { sum } from '@utils/array';
 
 const expand = (input: readonly string[]): string[] => {
