@@ -48,8 +48,15 @@ describe(`Day 11`, () => {
     });
 
     it('should work on test case (1_000_000x)', () => {
-      const expected = 0;
+      const expected = 82000210;
       const result = execute(part2, TEST_DATA, format, 1_000_000);
+
+      expect(result).to.equal(expected);
+    });
+
+    it('should work on part 1 real data and factor 2x', () => {
+      const expected = 9329143;
+      const result = execute(part2, DATA, format, 2);
 
       expect(result).to.equal(expected);
     });

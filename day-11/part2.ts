@@ -1,5 +1,5 @@
 import { Execute } from './format';
-import { coordFromString, Coordinate, coordToString, distanceCardinal } from '@utils/grid';
+import { coordFromString, Coordinate, distanceCardinal } from '@utils/grid';
 import { sum } from '@utils/array';
 
 const mark = (lines: string[]) => {
@@ -31,66 +31,48 @@ const shiftGalaxies = (
   });
 }
 
+const expandAxis = (galaxies: Map<number, Coordinate>, factor: number, axis: 'x' | 'y'): void => {
+  const AXIS_INDEX = axis === 'x' ? 0 : 1;
+
+  const sortByAxis = [...galaxies.entries()]
+    .sort((a, b) => a[1][AXIS_INDEX] - b[1][AXIS_INDEX])
+    .map(([n, c]) => n);
+
+  for (let i = 1; i < sortByAxis.length; i++) {
+    const [a, b] = [
+      sortByAxis[i - 1],
+      sortByAxis[i],
+    ];
+
+    const dist = galaxies.get(b)[AXIS_INDEX] - galaxies.get(a)[AXIS_INDEX];
+
+    if (dist < 2) {
+      continue;
+    }
+
+    const space = dist - 1;
+    const growth = space * factor - space;
+    const growthMatrix = [
+      axis === 'x' ? growth : 0,
+      axis === 'y' ? growth : 0,
+    ];
+
+    const min = galaxies.get(b)[AXIS_INDEX];
+
+    shiftGalaxies(
+      galaxies,
+      (n, c) => c[AXIS_INDEX] >= min,
+      (n, c) => [
+        c[0] + growthMatrix[0],
+        c[1] + growthMatrix[1],
+      ]
+    );
+  }
+}
+
 const expand = (galaxies: Map<number, Coordinate>, factor: number): void => {
-  // expand X
-  const sortByX = [...galaxies.entries()]
-    .sort((a, b) => a[1][0] - b[1][0])
-    .map(([n, c]) => n);
-
-  for (let i = 1; i < sortByX.length; i++) {
-    const [a, b] = [
-      sortByX[i - 1],
-      sortByX[i],
-    ];
-
-    const dist = galaxies.get(b)[0] - galaxies.get(a)[0];
-
-    if (dist < 2) {
-      continue;
-    }
-
-    const growth = (dist - 1) * factor - 1;
-    const min = galaxies.get(b)[0];
-
-    shiftGalaxies(
-      galaxies,
-      (n, c) => c[0] >= min,
-      (n, c) => [
-        c[0] + growth,
-        c[1],
-      ]
-    );
-  }
-
-  // expand Y
-  const sortByY = [...galaxies.entries()]
-    .sort((a, b) => a[1][1] - b[1][1])
-    .map(([n, c]) => n);
-
-  for (let i = 1; i < sortByY.length; i++) {
-    const [a, b] = [
-      sortByY[i - 1],
-      sortByY[i],
-    ];
-
-    const dist = galaxies.get(b)[1] - galaxies.get(a)[1];
-
-    if (dist < 2) {
-      continue;
-    }
-
-    const growth = (dist - 1) * factor - 1;
-    const min = galaxies.get(b)[1];
-
-    shiftGalaxies(
-      galaxies,
-      (n, c) => c[1] >= min,
-      (n, c) => [
-        c[0],
-        c[1] + growth,
-      ]
-    );
-  }
+  expandAxis(galaxies, factor, 'x');
+  expandAxis(galaxies, factor, 'y');
 };
 
 const getPairs = (galaxies: Map<number, Coordinate>): [number, number][] => {
@@ -107,33 +89,6 @@ const getPairs = (galaxies: Map<number, Coordinate>): [number, number][] => {
   return Array.from(pairs).map(coordFromString);
 }
 
-const printGalaxies = (galaxies: Map<number, Coordinate>): void => {
-  const galaxyList = [...galaxies.entries()];
-  const galaxyLookupMap = new Map<string, number>(
-    galaxyList.map(([n, c]) => {
-      const str = coordToString(c);
-      return [str, n];
-    })
-  );
-  const coords = galaxyList.map(([n, c]) => c);
-  const width = Math.max(...coords.map(([x, y]) => x));
-  const height = Math.max(...coords.map(([x, y]) => y));
-
-  for(let y = 0; y <= height; y++) {
-    let line = '';
-    for(let x = 0; x <= width; x++) {
-      const value = galaxyLookupMap.get(coordToString([x, y]));
-
-      if (value) {
-        line += value;
-      } else {
-        line += '.';
-      }
-    }
-    console.log(line);
-  }
-}
-
 export const execute: Execute = (lines, EXPANSION_FACTOR = 1_000_000) => {
   console.log('expand by', EXPANSION_FACTOR);
   const galaxies = mark(lines);
@@ -143,9 +98,6 @@ export const execute: Execute = (lines, EXPANSION_FACTOR = 1_000_000) => {
   const pairCoords = pairs.map((nodes) =>
     nodes.map(node => galaxies.get(node))
   );
-  console.log(pairs.length);
-  console.log(pairs);
-  console.log(pairCoords);
 
   return sum(
     pairCoords.map(([a, b]) => distanceCardinal(a, b))
