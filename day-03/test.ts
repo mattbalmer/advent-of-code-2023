@@ -12,7 +12,7 @@ const { TEST_DATA, DATA } = getData(
 describe(`Day 3`, () => {
   describe('part 1', () => {
     it('should work on test case', () => {
-      const expected = 114;
+      const expected = 4361;
       const result = execute(part1, TEST_DATA, format);
 
       expect(result).to.equal(expected);
