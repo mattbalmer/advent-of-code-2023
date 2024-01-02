@@ -12,7 +12,7 @@ type Chunks = Record<Type, Chunk>;
 
 const toChunks = (linesList: string[][]): Chunks => {
   const chunks: Chunk[] = linesList.map(([first, ...lines]) => {
-    const [, input, output] = first.match(/([a-z]+)-to-([a-z]+)/g);
+    const [, input, output] = first.match(/([a-z]+)-to-([a-z]+)/);
     const ranges = lines.map(line => {
       const [to, from, range] = line.split(' ').map(toInt);
       return [from, range, to] as Range;
@@ -34,8 +34,12 @@ const traverseMaps = (number: number, chunks: Chunks, input: Type = 'seed'): num
   const chunk = chunks[input];
 
   if (chunk) {
+    const range = chunk.ranges.find((range) => range[0] <= number && number < range[0] + range[1]);
+    const dest = range ? range[2] - range[0] + number : number;
     return traverseMaps(
-      chunk[]
+      dest,
+      chunks,
+      chunk.output
     );
   } else {
     return number;
